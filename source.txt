@@ -1,0 +1,492 @@
+#library
+library(tm)
+
+#import 27518 doucments
+data(Reuters21578)
+
+#processing
+rt <- preProcess(Reuters21578);
+
+all.class.name.train <- c("earn","acq","moneyfx","grain","crude","trade","interest","ship","wheat","cron");
+
+#train set
+query <- " TOPICS == 'YES' & LEWISSPLIT == 'TRAIN' ";
+trainSet <- tm_filter(rt, FUN = sFilter,query);
+
+#test set
+query <- " TOPICS == 'YES' & LEWISSPLIT == 'TEST' ";
+testSet <- tm_filter(rt, FUN = sFilter,query);
+
+#fliter according to the document
+topicFilter 
+
+#build up the topic set 
+earn.train <- trainSet[topicFilter(trainSet, 'earn', TRUE)]
+
+acq.train <- trainSet[topicFilter(trainSet, 'acq', TRUE)]
+
+moneyfx.train <- trainSet[topicFilter(trainSet, 'money-fx', TRUE)]
+
+grain.train <- trainSet[topicFilter(trainSet, 'grain', TRUE)]
+
+crude.train <- trainSet[topicFilter(trainSet, 'crude', TRUE)]
+
+trade.train <- trainSet[topicFilter(trainSet, 'trade', TRUE)]
+
+interest.train <- trainSet[topicFilter(trainSet, 'interest', TRUE)]
+
+ship.train <- trainSet[topicFilter(trainSet, 'ship', TRUE)]
+
+wheat.train <- trainSet[topicFilter(trainSet, 'wheat', TRUE)]
+
+cron.train <- trainSet[topicFilter(trainSet, 'corn', TRUE)]
+
+
+total.train <- c(earn.train,acq.train,moneyfx.train,grain.train,crude.train,trade.train,interest.train,
+ship.train,wheat.train,cron.train );
+
+#store the number of the document in the topic set
+all.class.length.train <- data.frame(earn=length(earn.train),acq=length(acq.train),moneyfx=length(moneyfx.train)
+,grain=length(grain.train),crude=length(crude.train),trade=length(trade.train)
+ ,interest=length(interest.train),ship=length(ship.train),wheat=length(wheat.train),corn=length(cron.train));
+
+# find the frequent terms
+#earn.removeSparse.dtm <- removeSparseTerms(earn.train.dtm, sparse = 0.95)
+earn.train.dtm <- DocumentTermMatrix(earn.train)
+earn.freqTerms.train <- findFreqTerms(earn.train.dtm,2887/3)
+
+acq.train.dtm <- DocumentTermMatrix(acq.train)
+acq.freqTerms.train <- findFreqTerms(acq.train.dtm,1650/3)
+
+moneyfx.train.dtm <- DocumentTermMatrix(moneyfx.train)
+moneyfx.freqTerms.train <- findFreqTerms(moneyfx.train.dtm,538/3)
+
+grain.train.dtm <- DocumentTermMatrix(grain.train)
+grain.freqTerms.train <- findFreqTerms(grain.train.dtm,433/3)
+
+crude.train.dtm <- DocumentTermMatrix(crude.train)
+crude.freqTerms.train <- findFreqTerms(crude.train.dtm,389/3)
+
+trade.train.dtm <- DocumentTermMatrix(trade.train)
+trade.freqTerms.train <- findFreqTerms(trade.train.dtm,369/3)
+
+interest.train.dtm <- DocumentTermMatrix(interest.train)
+interest.freqTerms.train <- findFreqTerms(interest.train.dtm,347/3)
+
+ship.train.dtm <- DocumentTermMatrix(ship.train)
+ship.freqTerms.train <- findFreqTerms(ship.train.dtm,197/3)
+
+wheat.train.dtm <- DocumentTermMatrix(wheat.train)
+wheat.freqTerms.train <- findFreqTerms(wheat.train.dtm,212/3)
+
+cron.train.dtm <- DocumentTermMatrix(cron.train)
+cron.freqTerms.train <- findFreqTerms(cron.train.dtm,181/3)
+
+contorl.train <- list(wordLengths = c(1,Inf), weighting = weightTfIdf)
+earn.train.dtm <- TermDocumentTermMatrix(earn.train, contorl.train)
+
+#store the frequent terms
+all.class.freqTerms.train  <- list(earn=earn.freqTerms.train,acq=acq.freqTerms.train,moneyfx=moneyfx.freqTerms.train
+,grain=grain.freqTerms.train,crude=crude.freqTerms.train,trade=trade.freqTerms.train
+ ,interest=interest.freqTerms.train,ship=ship.freqTerms.train,wheat=wheat.freqTerms.train,corn=cron.freqTerms.train); 
+
+#build up the dictionary 
+dic.train <- removeExtraFreqTerms(all.class.freqTerms.train)
+
+earn.train.dic <- DocumentTermMatrix(earn.train,list(dictionary = dic.train))
+acq.train.dic <- DocumentTermMatrix(acq.train,list(dictionary = dic.train))
+moneyfx.train.dic <- DocumentTermMatrix(moneyfx.train,list(dictionary = dic.train))
+grain.train.dic <- DocumentTermMatrix(grain.train,list(dictionary = dic.train))
+crude.train.dic <- DocumentTermMatrix(crude.train,list(dictionary = dic.train))
+trade.train.dic <- DocumentTermMatrix(trade.train,list(dictionary = dic.train))
+interest.train.dic <- DocumentTermMatrix(interest.train,list(dictionary = dic.train))
+ship.train.dic <- DocumentTermMatrix(ship.train,list(dictionary = dic.train))
+wheat.train.dic <- DocumentTermMatrix(wheat.train,list(dictionary = dic.train))
+cron.train.dic <- DocumentTermMatrix(cron.train,list(dictionary = dic.train))
+
+#.............................NB........................
+earn.df.train <- as.data.frame(inspect(earn.train.dic))
+#earn.type <- rep(1,2877)
+#earn.df.train$type <- earn.type
+
+acq.df.train <- as.data.frame(inspect(acq.train.dic))
+#acq.type <- rep(2,1650)
+#acq.df.train$type <- acq.type
+
+moneyfx.df.train <- as.data.frame(inspect(moneyfx.train.dic))
+#moneyfx.type <- rep(3,538)
+#moneyfx.df.train$type <- moneyfx.type
+
+grain.df.train <- as.data.frame(inspect(grain.train.dic))
+#grain.type <- rep(4,433)
+#grain.df.train$type <- grain.type
+
+crude.df.train <- as.data.frame(inspect(crude.train.dic))
+#crude.type <- rep(5,389)
+#crude.df.train$type <- crude.type
+
+trade.df.train <- as.data.frame(inspect(trade.train.dic))
+#trade.type <- rep(6,369)
+#trade.df.train$type <- trade.type
+
+interest.df.train <- as.data.frame(inspect(interest.train.dic))
+#interest.type <- rep(7,347)
+#interest.df.train$type <- interest.type
+
+ship.df.train <- as.data.frame(inspect(ship.train.dic))
+#ship.type <- rep(8,197)
+#ship.df.train$type <- ship.type
+
+wheat.df.train <- as.data.frame(inspect(wheat.train.dic))
+#wheat.type <- rep(9,212)
+#wheat.df.train$type <- wheat.type
+
+cron.df.train <- as.data.frame(inspect(cron.train.dic))
+#cron.type <- rep(10,181)
+#cron.df.train$type <- cron.type
+
+
+#total.df.train <- rbind(earn.df.train, acq.df.train, moneyfx.df.train, grain.df.train,
+					crude.df.train, trade.df.train, interest.df.train, ship.df.train,
+					wheat.df.train, cron.df.train)
+
+#....................naiveBayes function in tm .............................
+model.nb <- naiveBayes(type ~ ., data = total.df.train)
+pred.nb <- predict(ksvm, total.df.train)
+table(pred.nb ,total.df.train$type)
+#Test
+pred.nb.test <- predict(model.nb, total.df.test)
+table(pred.nb.test ,total.df.test$type)
+
+
+#......................nb classify. ten binary classify.............................
+earn.df.train <- as.data.frame(inspect(earn.train.dic));
+acq.df.train <- as.data.frame(inspect(acq.train.dic));
+moneyfx.df.train <- as.data.frame(inspect(moneyfx.train.dic))
+grain.df.train <- as.data.frame(inspect(grain.train.dic))
+crude.df.train <- as.data.frame(inspect(crude.train.dic))
+trade.df.train <- as.data.frame(inspect(trade.train.dic))
+interest.df.train <- as.data.frame(inspect(interest.train.dic))
+ship.df.train <- as.data.frame(inspect(ship.train.dic))
+wheat.df.train <- as.data.frame(inspect(wheat.train.dic))
+cron.df.train <- as.data.frame(inspect(cron.train.dic))
+
+
+#........................earn classify...........................
+earn.df.classify.yes <- earn.df.train
+earn.df.classify.no <- rbind(acq.df.train, moneyfx.df.train, grain.df.train,
+					crude.df.train, trade.df.train, interest.df.train, ship.df.train,
+					wheat.df.train, cron.df.train)
+
+#........................acq classify...........................
+acq.df.classify.yes <- acq.df.train
+acq.df.classify.no <- rbind(earn.df.train, moneyfx.df.train, grain.df.train,
+					crude.df.train, trade.df.train, interest.df.train, ship.df.train,
+					wheat.df.train, cron.df.train)
+
+#........................moneyfx classify...........................
+moneyfx.df.classify.yes <- moneyfx.df.train
+moneyfx.df.classify.no <- rbind(earn.df.train, acq.df.train , grain.df.train,
+					crude.df.train, trade.df.train, interest.df.train, ship.df.train,
+					wheat.df.train, cron.df.train)
+
+#........................grain classify...........................
+grain.df.classify.yes <- grain.df.train
+grain.df.classify.no <- rbind(moneyfx.df.train,earn.df.train, acq.df.train ,
+					crude.df.train, trade.df.train, interest.df.train, ship.df.train,
+					wheat.df.train, cron.df.train)
+
+#........................crude classify...........................
+crude.df.classify.yes <- crude.df.train
+crude.df.classify.no <- rbind(grain.df.train,moneyfx.df.train,earn.df.train, acq.df.train ,
+					 trade.df.train, interest.df.train, ship.df.train,
+					wheat.df.train, cron.df.train)
+
+#........................trade classify...........................
+trade.df.classify.yes <- trade.df.train
+trade.df.classify.no <- rbind(crude.df.train,grain.df.train,moneyfx.df.train,earn.df.train, acq.df.train ,
+					 interest.df.train, ship.df.train,
+					wheat.df.train, cron.df.train)
+
+#........................interest classify...........................
+interest.df.classify.yes <- interest.df.train
+interest.df.classify.no <- rbind(trade.df.train,crude.df.train,grain.df.train,moneyfx.df.train,earn.df.train, acq.df.train ,
+					  ship.df.train,
+					wheat.df.train, cron.df.train)
+
+#........................ship classify...........................
+ship.df.classify.yes <-  ship.df.train
+ship.df.classify.no <- rbind(trade.df.train,crude.df.train,grain.df.train,moneyfx.df.train,earn.df.train, acq.df.train ,
+					 interest.df.train,
+					wheat.df.train, cron.df.train)
+
+#........................wheat classify...........................
+wheat.df.classify.yes <- wheat.df.train
+wheat.df.classify.no <- rbind(earn.df.train,acq.df.train, moneyfx.df.train, grain.df.train,
+					crude.df.train, trade.df.train, interest.df.train, ship.df.train,cron.df.train)
+
+
+#........................cron classify...........................
+cron.df.classify.yes <- cron.df.train
+cron.df.classify.no <- rbind(earn.df.train,acq.df.train, moneyfx.df.train, grain.df.train,
+					crude.df.train, trade.df.train, interest.df.train, ship.df.train,
+					wheat.df.train)
+
+#nbGetClass(cron.train, dic.train, all.class.name.train);
+
+#nbGetClass(wheat.train, dic.train, all.class.name.train);
+
+
+#find the total number in the topic set 
+#nbGetEachClassTotalNum
+
+all.class.list.num <- nbGetEachClassTotalNum()
+
+#get the probability about topic
+#nbGetEachClassPro <- function(class.length)
+all.class.list.pro <- nbGetEachClassPro(all.class.length.train);
+
+# get  the probability about  a term
+#nbCalClassPro <- function(word, index, name.train)
+
+
+#nbTrain <- function(test,feature, name.train)
+
+#nbGetClass <- function(tests,feature, name.train)
+
+#NB ................... test...................
+nbGetClass(acq.train, dic.train, all.class.name.train);
+nbGetClass(moneyfx.train, dic.train, all.class.name.train);
+nbGetClass(grain.train, dic.train, all.class.name.train);
+nbGetClass(crude.train, dic.train, all.class.name.train);
+nbGetClass(trade.train, dic.train, all.class.name.train);
+nbGetClass(interest.train, dic.train, all.class.name.train);
+nbGetClass(ship.train, dic.train, all.class.name.train);
+
+
+earn.total.train.nb <-  nbGetClass(total.train, dic.train, all.class.name.train);
+earn.train.nb <- nbGetClass(earn.train, dic.train, all.class.name.train);
+earn.total.train.nb.real <-  rep(1:2,c(all.class.length.train[1],(sum(all.class.length.train)-all.class.length.train[1])));
+pred.train.nb.roc <- prediction(earn.total.train.nb, earn.total.train.nb.real);
+pref.train.nb.roc <- performance(pred.train.nb.roc, "tpr", "fpr");
+plot(pref.train.nb.roc, colorize = TRUE);
+grid(5,5,lwd = 1);
+points(c(0,1),c(0,1),type= "1",lty=2,lwd=2,col= "grey");
+
+
+acq.total.train.nb <-  nbGetClass(total.train, dic.train, all.class.name.train);
+acq.train.nb <- nbGetClass(acq.train, dic.train, all.class.name.train);
+acq.total.train.nb.real <- rep(2,all.class.length.train[1]);
+acq.total.train.nb.real <- append(acq.total.train.nb.real,
+rep(1:2, c(all.class.length.train[2],(sum(all.class.length.train) - all.class.length.train[1]-all.class.length.train[2]))))
+pred.train.nb.roc <- prediction(acq.total.train.nb, acq.total.train.nb.real);
+pref.train.nb.roc <- performance(pred.train.nb.roc, "tpr", "fpr");
+plot(pref.train.nb.roc, colorize = TRUE);
+
+
+acq.total.test.nb <- nbGetClass(total.test, dic.train, all.class.name.train);
+acq.test.nb <- nbGetClass(acq.test, dic.train, all.class.name.train);
+acq.total.test.nb.real <- rep(2,all.class.length.test[1]);
+acq.total.test.nb.real <- append(acq.total.test.nb.real,
+rep(1:2, c(all.class.length.test[2],(sum(all.class.length.test) - all.class.length.test[1]-all.class.length.test[2]))))
+pred.test.nb.roc <- prediction(acq.total.test.nb, acq.total.test.nb.real, );
+pref.test.nb.roc <- performance(pred.test.nb.roc, "tpr", "fpr");
+plot(pref.test.nb.roc, colorize = TRUE, main = "Acq");
+grid(5,5,lwd = 1);
+points(c(0,1),c(0,1),type= "p",lty=2,lwd=2,col= "grey");
+
+
+#.......test................
+
+earn.total.test.nb <- nbGetClass(total.test, dic.train, all.class.name.train);
+earn.test.nb <- nbGetClass(earn.test, dic.train, all.class.name.train);
+
+earn.nb.test.real <- rep(1:2,c(all.class.length.test[1],(sum(all.class.length.test)-all.class.length.test[1]));
+pred.nb.roc <- prediction(earn.nb, earn.nb.real);
+pref.nb.roc <- performance(pred.nb.roc, "tpr", "fpr");
+plot(pref.nb.roc, colorize = TRUE);
+grid(5,5,lwd = 1);
+points(c(0,1),c(0,1),type= "1",lty=2,lwd=2,col= "grey");
+
+earn.test.nb <- nbGetClass(earn.test, dic.train, all.class.name.train);
+
+
+
+#.................svm.....................
+total.df.train <- rbind(earn.df.train, acq.df.train, moneyfx.df.train, grain.df.train,
+					crude.df.train, trade.df.train, interest.df.train, ship.df.train,
+					wheat.df.train, cron.df.train)
+total.df.train$type = factor(rep(1:10,times= all.class.length.train))
+levels(total.df.train$type) = all.class.name.train
+library(kernlab)
+ksvm <- ksvm(type ~ ., data = total.df.train)
+pred.ksvm <- predict(ksvm, total.df.train)
+table(pred.ksvm ,total.df.train$type)
+
+#ROC curve
+pred.svm.roc <-  predict(ksvm, total.df.train,decision.values = TRUE)
+p.svm.roc <- attr(pred.svm.roc, "decision.values");
+pred.svm.roc <- prediction(pred.ksvm, total.df.train$type);
+pref.svm.roc <- performance(pred.svm.roc, "tpr", "fpr");
+plot(pref.svm.roc, colorize = TRUE);
+grid(5,5,lwd = 1);
+points(c(0,1),c(0,1),type= "1",lty=2,lwd=2,col= "grey");
+
+
+total.df.test <- rbind(earn.df.test, acq.df.test, moneyfx.df.test, grain.df.test,
+					crude.df.test, trade.df.test, interest.df.test, ship.df.test,
+					wheat.df.test, cron.df.test)
+total.df.test$type = factor(rep(1:10,times= all.class.length.test))
+pred.ksvm.test <- predict(ksvm, total.df.test)
+table(pred.ksvm.test ,total.df.test$type)
+
+
+#.................KNN  .............
+
+earn.train.dic.matrix <- as.matrix(earn.train.dic);
+acq.train.dic.matrix <- as.matrix(acq.train.dic);
+moneyfx.train.dic.matrix <- as.matrix(moneyfx.train.dic);
+grain.train.dic.matrix <- as.matrix(grain.train.dic);
+crude.train.dic.matrix <- as.matrix(crude.train.dic);
+trade.train.dic.matrix <- as.matrix(trade.train.dic);
+interest.train.dic.matrix <- as.matrix(interest.train.dic);
+ship.train.dic.matrix <- as.matrix(ship.train.dic);
+wheat.train.dic.matrix <- as.matrix(wheat.train.dic);
+cron.train.dic.matrix <- as.matrix(cron.train.dic);
+total.dic.matrix <- rbind(earn.train.dic.matrix, acq.train.dic.matrix, moneyfx.train.dic.matrix, grain.train.dic.matrix,
+					crude.train.dic.matrix, trade.train.dic.matrix, interest.train.dic.matrix, ship.train.dic.matrix,
+					wheat.train.dic.matrix, cron.train.dic.matrix)
+total.dic.matrix$type = factor(rep(1:10,times= all.class.length.train))
+levels(total.dic.matrix$type) = all.class.name.train
+
+
+#nummber of the document in the all training set 
+total.dic.matrix.row <- nrow(total.dic.matrix);
+
+#calculate the distance between testSet and trainSet
+#disKNN()
+
+#select 
+#judgeKNN()
+
+#testKNN <- function(tests,trainset, len,class.length,classname)
+
+#test
+testKNN( total.dic.matrix,total.dic.matrix, total.dic.matrix.row, all.class.length.train, all.class.name.train)
+
+#
+[1] "...total...."
+[1] 7193
+[1] "...success ...."
+[1] 7193
+[1] "...error...."
+[1] 0
+
+
+
+
+
+#......................build up the test............................
+#build up the test set about the topic
+earn.test <- testSet[topicFilter(testSet, 'earn', TRUE)]
+
+acq.test <- testSet[topicFilter(testSet, 'acq', TRUE)]
+
+moneyfx.test <- testSet[topicFilter(testSet, 'money-fx', TRUE)]
+
+grain.test <- testSet[topicFilter(testSet, 'grain', TRUE)]
+
+crude.test <- testSet[topicFilter(testSet, 'crude', TRUE)]
+
+trade.test <- testSet[topicFilter(testSet, 'trade', TRUE)]
+
+interest.test <- testSet[topicFilter(testSet, 'interest', TRUE)]
+
+ship.test <- testSet[topicFilter(testSet, 'ship', TRUE)]
+
+wheat.test <- testSet[topicFilter(testSet, 'wheat', TRUE)]
+
+cron.test <- testSet[topicFilter(testSet, 'corn', TRUE)]
+
+total.test <-c(earn.test,acq.test,moneyfx.test,grain.test,crude.test,trade.test,interest.test,ship.test,
+wheat.test,cron.test);
+
+#store the number in the topic test set
+all.class.length.test <- data.frame(earn=length(earn.test),acq=length(acq.test),moneyfx=length(moneyfx.test)
+,grain=length(grain.test),crude=length(crude.test),trade=length(trade.test)
+ ,interest=length(interest.test),ship=length(ship.test),wheat=length(wheat.test),corn=length(cron.test));
+
+
+earn.test.dic <- DocumentTermMatrix(earn.test,list(dictionary = dic.train))
+acq.test.dic <- DocumentTermMatrix(acq.test,list(dictionary = dic.train))
+moneyfx.test.dic <- DocumentTermMatrix(moneyfx.test,list(dictionary = dic.train))
+grain.test.dic <- DocumentTermMatrix(grain.test,list(dictionary = dic.train))
+crude.test.dic <- DocumentTermMatrix(crude.test,list(dictionary = dic.train))
+trade.test.dic <- DocumentTermMatrix(trade.test,list(dictionary = dic.train))
+interest.test.dic <- DocumentTermMatrix(interest.test,list(dictionary = dic.train))
+ship.test.dic <- DocumentTermMatrix(ship.test,list(dictionary = dic.train))
+wheat.test.dic <- DocumentTermMatrix(wheat.test,list(dictionary = dic.train))
+cron.test.dic <- DocumentTermMatrix(cron.test,list(dictionary = dic.train))
+
+earn.test.dic.matrix <- as.matrix(earn.test.dic);
+acq.test.dic.matrix <- as.matrix(acq.test.dic);
+moneyfx.test.dic.matrix <- as.matrix(moneyfx.test.dic);
+grain.test.dic.matrix <- as.matrix(grain.test.dic);
+crude.test.dic.matrix <- as.matrix(crude.test.dic);
+trade.test.dic.matrix <- as.matrix(trade.test.dic);
+interest.test.dic.matrix <- as.matrix(interest.test.dic);
+ship.test.dic.matrix <- as.matrix(ship.test.dic);
+wheat.test.dic.matrix <- as.matrix(wheat.test.dic);
+cron.test.dic.matrix <- as.matrix(cron.test.dic);
+total.dic.test.matrix <- rbind(earn.test.dic.matrix, acq.test.dic.matrix, moneyfx.test.dic.matrix, grain.test.dic.matrix,
+					crude.test.dic.matrix, trade.test.dic.matrix, interest.test.dic.matrix, ship.test.dic.matrix,
+					wheat.test.dic.matrix, cron.test.dic.matrix)
+
+total.dic.test.matrix$type = factor(rep(1:10,times= all.class.length.test))
+levels(total.dic.test.matrix$type) = all.class.name.train
+
+
+#nummber of the document in the all training set 
+total.dic.test.matrix.row <- nrow(total.dic.test.matrix);
+
+
+earn.df.test <- as.data.frame(inspect(earn.test.dic));
+acq.df.test <- as.data.frame(inspect(acq.test.dic));
+moneyfx.df.test <- as.data.frame(inspect(moneyfx.test.dic))
+grain.df.test <- as.data.frame(inspect(grain.test.dic))
+crude.df.test <- as.data.frame(inspect(crude.test.dic))
+trade.df.test <- as.data.frame(inspect(trade.test.dic))
+interest.df.test <- as.data.frame(inspect(interest.test.dic))
+ship.df.test <- as.data.frame(inspect(ship.test.dic))
+wheat.df.test <- as.data.frame(inspect(wheat.test.dic))
+cron.df.test <- as.data.frame(inspect(cron.test.dic))
+
+
+
+testKNN( total.dic.test.matrix,total.dic.test.matrix, total.dic.test.matrix.row, all.class.length.test, all.class.name.train)
+#result
+[1] "...total...."
+[1] 2787
+[1] "...success ...."
+[1] 2787
+[1] "...error...."
+[1] 0
+
+
+#.................cluster in tm ...................
+#hierarchy cluster
+clustering.train <- DocumentTermMatrix(trainSet,list(dictionary = dic.train))
+clustering.df.train <- as.data.frame(inspect(clustering.train))
+clustering.data.scale <- scale(clustering.df.train);
+clustering.d <- dist(clustering.data.scale,method = "euclidean");
+clustering.fit <- hclust(clustering.d,method = "ward");
+plot(clustering.fit);
+
+#kmeans
+train.kmeans <- kmeans(total.dic.test.matrix, 10);
+type = rep(1:10,times= all.class.length.test)
+table(type, train.kmeans$cluster)
+
+
+train.hclust <- scale(total.dic.matrix)
+
